@@ -1,0 +1,9 @@
+# Abstract {.unnumbered}
+
+Deciding on which post-secondary institution to attend can be a very daunting task. For many students their choice of institution will be the first step in reaching their future career goals, and the hope for any student is that the institution they attend will help them reach success in their chosen field. One major metric of success is how much they will earn after leaving school, and for students it can be a very strong driving force when deciding between institutions.
+
+To assist students in finding the institution that meets their financial needs/goals, we created a Machine Learning model to predict earnings post-graduation using various characteristics of an institution. Data was gathered from the [College Scorecard website](https://collegescorecard.ed.gov/) and it was used to train 4 different supervised machine learning regression models: SVM, Decision Tree, KNN, and Lasso.
+
+The model that proved most accurate was the SVM model. It was able to achieve an R-Squared of around 0.8 and predict the earnings post-graduation with an RMSE of 4527. In addition to creating a model that could predict future earnings, interesting correlations between some of the features used to train the model were found. These correlations were: student completion rate vs school's net tuition revenue, family income vs future earnings, and withdrawal rate vs median family income.
+
+This model serves to assist not just students but institutions as well in understanding what features may play a role in the future earnings of their graduates. Through use of this model the hope is that students gain deeper insight into the institutions they wish to attend, as well as assist them in selecting a school that meets their financial goals.

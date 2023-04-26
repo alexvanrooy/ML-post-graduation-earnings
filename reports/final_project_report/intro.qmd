@@ -1,0 +1,13 @@
+# Introduction to Project
+
+The task of picking an institution to complete a post-secondary education at is a very intimidating one. More and more information is being made available to students so that they can guide their decision with information relevant to them and their future goals. One thing that many students consider when deciding on which school to attend, is how successful they will be after graduating from an institution. Knowing what a student can expect after graduating from an institution can be a great benefit to them when picking between schools. Although success is measured in many ways, one metric of success is earnings. By having knowledge about how much a student may earn after graduating from an institution, they can tailor their selection of potential schools based off their future goals and the trade-off between costs to attend a school versus what they may get after graduating. 
+
+To solve this problem, this report proposes a machine learning learning model that will take various characteristics of an institution and predict the future earnings of a student, 6 years after graduation.  
+
+## Overview
+
+This report is split into sections, they are: Pre-Processing and Data Exploration which will explain the dataset that is used and how it was prepared, Methodology which explains the models that were selected and how they were trained to the data, Results which reports and analyses the outcome after testing the trained models, and Finally Conclusion which summarizes the findings and discussed potential future work.
+
+## Objectives of Project
+
+This project has two objectives. The primary objective is to create a model that uses various characteristics of a post-secondary institution and produces an accurate and meaningful estimate of what the future earnings a student graduating from a specific institution may look like. The secondary objective is to provide institution and students with some deeper knowledge about what factors may contribute to more earnings post-graduation from specific institutions.

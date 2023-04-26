@@ -1,0 +1,120 @@
+# Pre-Processing and Exploratory Data Analysis
+
+Before any of the models were trained, tested and compared, the raw dataset was first processed to make it suitable for use. The sections below outline the data collection as well as data pre-processing steps that were carried out in order to produce a dataset suitable for use.
+
+## Dataset Collection
+
+The dataset that was used for this program is the U.S. Department of Education's College Scorecard Dataset, which is publicly available for download [here](https://collegescorecard.ed.gov/data/). They offer two datasets, one pertains to information by Field of Study, the other pertains to Institution-Level Data. For the purposes of this project we used the Institution-Level Dataset. 
+
+The College Scorecard Project is designed for the purpose of providing future students with information about the potential costs and outcomes of different colleges. It's goal is to provide transparency with families so they can look through the data and make judgments as to meet their own financial and educational goals. They collected their information through federal reporting from institutions, data on federal financial aid, and tax information.
+
+The information in the dataset relates to topics such as: costs, student body demographics, admissions, earnings, and debt, just to name a few. Most importantly, for each institution the dataset had information on the mean earnings for their graduates, which will be used as the target variable in model training and prediction.
+
+The dataset directly from the website cannot be used to train the models so it first must be cleaned and processed, which will be discussed in the next section.
+
+## Data Pre-processing
+
+The raw dataset had 6681 rows and 2989 columns before it was cleaned and processed. In other words, there are almost 3000 features per institution in the dataset. This amount of features is much too large for the scale of this project, but also, with these many features it could affect the model performance and it would be hard to generate any meaningful analysis with so many variables to look through. Thus through pre-processing, the number of features used to train the models is cut down significantly.
+
+### Converting Columns to Numeric
+
+The first problem with the dataset is that some of the columns are of mixed datatype, meaning some elements of a column may be numeric while others are text based. One reason why this is the case is because for some of the entries in the dataset, the value "PrivacySupressed" was given to them in order to protect the privacy of individuals, and this can lead to a column having a mix of numeric values and "PrivacySupressed" values.
+
+To deal with this, all columns that were not fully numeric were gathered and the elements in the columns were converted to numeric. Elements that did not have a numeric representation were treated as NaN, i.e. missing. The majority of the dataset's features were numeric so this did not affect any important features.
+
+### Dealing With Missing Values
+
+When the dataset is first examined, about 18% of its values are NaN. After performing the procedure explained in the previous section, that number rises to 63% of the values are NaN. To deal with these missing values, each column and row is examined. If a column has over 40% of it's entries as NaN then it is considered a 'bad column' and it is dropped. Similarly if a row has over 40% of its values as NaN then it is considered a 'bad row' and it's removed. The purpose of using this threshold approach is that it allows us to remove columns/rows that offer very little real data, while also preserving columns/rows that have missing data but have a majority real data. After this procedure is performed the number of NaN values drastically drops to around 9% and the dimensions of the dataset change to 5003 rows and 732 columns.
+
+With the remaining 9% of missing values, we replaced each of them with the mean value of the column they appeared in.
+
+Now the dataset has no missing values and is ready for further processing to make it ready for training models.
+
+### Scaling Data
+
+The values in the dataset range in magnitude and thus it may be appropriate to scale the data. However, scaling/standardizing the data does not necessarily improve the performance of all models so the scaling of data is handled at the model level right before training the model. The models in this project that utilized scaling/standardizing are SVM, KNN, and Lasso. For more information regarding scaling please refer to @sec-methodology.
+
+## Feature Selection 
+
+Before the dataset can be used for training the models, the features and target need to be extracted.
+
+For the target variable the feature "MN_EARN_WNE_P6" will be used. This variable represents the mean earnings of a student 6 years after they graduated.
+
+The dataset has 732 columns that can be used in the feature selection process. Due to the quantity of possible features and limited processing power, it was too computationally intensive to find the best features using feature extraction techniques. Instead the features were hand selected based on relevance to the end goal. It is also important to note that although there were 732 features, many of the features were subdivisions of a larger category, and thus they reported very similar data. The number of features selected was 82, they are displayed in the table below.
+
+|                   |                   |                |
+|-------------------|-------------------|----------------|
+| SCH_DEG           | PPTUG_EF          | FTFTPCTFLOAN   |
+| MAIN              | TUITFTE           | CNTOVER150_1YR |
+| NUMBRANCH         | INEXPFTE          |                |
+| PREDDEG           | POOLYRS           |                |
+| HIGHDEG           | POOLYRS200        |                |
+| CONTROL           | PCTFLOAN          |                |
+| CCBASIC           | CDR2              |                |
+| CCUGPROF          | CDR3              |                |
+| CCSIZSET          | COMP_ORIG_YR2_RT  |                |
+| DISTANCEONLY      | WDRAW_ORIG_YR2_RT |                |
+| UGDS              | COMP_ORIG_YR3_RT  |                |
+| UGDS_WHITE        | WDRAW_ORIG_YR3_RT |                |
+| UGDS_BLACK        | COMP_ORIG_YR4_RT  |                |
+| UGDS_HISP         | WDRAW_ORIG_YR4_RT |                |
+| UGDS_ASIAN        | COMP_ORIG_YR6_RT  |                |
+| UGDS_AIAN         | WDRAW_ORIG_YR6_RT |                |
+| UGDS_NHPI         | COMP_ORIG_YR8_RT  |                |
+| UGDS_2MOR         | WDRAW_ORIG_YR8_RT |                |
+| UGDS_NRA          | RPY_1YR_RT        |                |
+| UGDS_UNKN         | COMPL_RPY_1YR_RT  |                |
+| NONCOM_RPY_1YR_RT | FEMALE_DEBT_N     |                |
+| RPY_3YR_RT        | MALE_DEBT_N       |                |
+| COMPL_RPY_3YR_RT  | FAMINC            |                |
+| NONCOM_RPY_3YR_RT | MD_FAMINC         |                |
+| RPY_5YR_RT        | FAMINC_IND        |                |
+| COMPL_RPY_5YR_RT  | PCT_WHITE         |                |
+| NONCOM_RPY_5YR_RT | PCT_BLACK         |                |
+| RPY_7YR_RT        | PCT_ASIAN         |                |
+| INC_PCT_LO        | PCT_HISPANIC      |                |
+| INC_PCT_M1        | PCT_BA            |                |
+| INC_PCT_M2        | PCT_GRAD_PROF     |                |
+| PAR_ED_PCT_PS     | PCT_BORN_US       |                |
+| DEBT_MDN          | MEDIAN_HH_INC     |                |
+| GRAD_DEBT_MDN     | POVERTY_RATE      |                |
+| WDRAW_DEBT_MDN    | UNEMP_RATE        |                |
+| FEMALE_DEBT_MDN   | ICLEVEL           |                |
+| MALE_DEBT_MDN     | UGDS_MEN          |                |
+| DEBT_N            | UGDS_WOMEN        |                |
+| GRAD_DEBT_N       | OPENADMP          |                |
+| WDRAW_DEBT_N      | FTFTPCTPELL       |                |
+
+: Features Used {#tbl-features}
+
+For a detailed explanation please refer to the [College Scorecard website](https://collegescorecard.ed.gov/assets/InstitutionDataDocumentation.pdf).
+
+The basic description of these features is displayed in @tbl-featureDesc.
+
+| Feature Name     | Description                                                                             |
+|------------------|-----------------------------------------------------------------------------------------|
+| SCH_DEG          | Institution Award                                                                       |
+| MAIN             | Is this the main campus?                                                                |
+| NUMBRANCH        | How many campus' does this institution have                                             |
+| PREDDEG          | Identifies the type of award that the institution primarily confers                     |
+| HIGHDEG          | Highest award level conferred at the institution                                        |
+| CONTROL          | Identifies what type of institution this is (public, private, etc.)                     |
+| CCBASIC          | Basic Carnegie Foundation Classification                                                |
+| CCUGPROF         | Carnegie Foundation Undergraduate profile                                               |
+| CCSIZSET         | Carnegie Foundation Size and Setting Classification                                     |
+| DISTANCEONLY     | Is the institution online only?                                                         |
+| UGDS_*           | Number of undergraduates                                                                |
+| NONCOM_RPY_*     | The debt repayment rate of students who withdrew before completion                      |
+| COMPL_RPY_*      | The debt repayment rate of students who completed                                       |
+| RPY_             | Repayment Rate                                                                          |
+| INC_PCT_*        | Family Income                                                                           |
+| PAR_ED_PCT_PS    | Share of students who's parents completed post-secondary education.                     |
+| DEBT_*           | Debt for differnt metrics                                                               |
+| PPTUG_EF         | Proportion of full-time/part-time undergraduates                                        |
+| TUITFTE          | Net Tuition Revenue                                                                     |
+| INEXPFTE         |  Instructional Expenditures Per Full-Time Student                                       |
+| COMP_ORIG_*      | Rate of students who completed studies at original institution                          |
+| WDRAW_ORIG_*     | Rate of students who withdrew from studies at original institution                      |
+| FAMINC           | Family Income                                                                           |
+
+: Basic Feature Description {#tbl-featureDesc}

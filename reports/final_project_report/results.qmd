@@ -1,0 +1,98 @@
+# Results {#sec-results}
+
+After the models had been optimized and trained, they could now be used to predict results for the unseen test data. The sections below will cover the results of the testing and interpretation of the results.
+
+## Performance Metrics
+
+Since the problem of predicting future earnings after graduation is a regression problem, the class of models that were used were regression models. This also means that the metrics for assessing the performance of each model would be regression metrics. The specific metrics that were used are: R-Squared, Root Mean Square Error (RMSE), and Mean Absolute Error (MAE). The sections below will briefly explain each metric and why it was chosen.
+
+### R-Squared
+
+The R-Squared metric is also known as the fraction of variance explained by the model. The best a model can achieve is an R-Squared of 1.0, this would mean that the model is able to account for 100% of the variance found in the model. The R-Squared is a very important metric because it gives us an idea of how well the model is fitting to the data. There are some limitations of the R-Squared metric and that is R-Squared will always improve or stay the same when new features are added to the model, this means that using this metric to determine the significance of features is not possible because with the addition of any feature R-Squared will not get worse, no matter the significance. 
+
+R-Squared is also an important metric but it cannot give the full picture of a regression model, so other evaluation metrics will be used alongside it.
+
+### RMSE
+
+The Root Mean Square Error (RMSE) is another widely used metric. RMSE measures how far away the model's predicted values are from the real values. RMSE is very useful when trying to make accurate predictions because it can tell us how far off the model is. Another metric that was considered was the Mean Square Error (MSE), which also calculates how off the predictions were from the true values. The difference between RMSE and MSE, besides that RMSE is just the square root of MSE, is that the values reported by RMSE are in the same unit as the values being predicted, while the values reported in MSE are the unit-squared. This makes RMSE more interpretable compared to MSE which is why it was chosen. RMSE also works well in the context of the problem, since this project is about predicting the dollar earnings of a student post-graduation, it is useful to see how off the model is in terms of dollars. Since the MSE values will be squared, it can be difficult to interpret the correlation between that error and the true values, thus RMSE was chosen.
+
+There is a downside to using RMSE however and that is that larger outlier errors can inflate the RMSE score and thus not show as accurate of a representation of the model.
+
+### MAE
+
+The Mean Absolute Error (MAE) is similar to the RMSE metric in the sense that the reported values are in the same unit as the target values. One of the main differences in the MAE is that the sign of the difference (positive or negative) does not effect the end score, instead the absolute value of the difference is taken. This means that all differences between the predicted values and the target values will linearly contribute to the resulting score. The MAE is an attractive metric because it is not as affected by outliers as MSE would be, MAE also is easy to interpret and the size of the error can be quickly related to the context of the problem at hand.
+
+## Results Table
+
+In order to produce consistent results for the purpose of reporting, the random state = 1 was used throughout the project, this is to ensure that the results communicated here are replicable.
+
+The table below is the program output after training and testing all the models. It should be noted that if the random state was different these results would also be different. For instance, the R-Squared of the SVM model can vary to be above or below 0.8, but generally it tends to be close to 0.8.
+
+Each model was tested using the same unseen test data.
+
+
+Model Name    | R-Squared | Root Mean Squared Error | Mean Absolute Error |
+--------------|-----------|-------------------------|---------------------|
+SVM           |       0.80|                  4527.58|              2965.03|
+Decision Tree |       0.77|                  4833.70|              3232.26|
+KNN           |       0.77|                  4911.69|              3356.71|
+Lasso         |       0.09|                  9709.69|              7705.84|
+
+: Results from Models {#tbl-results}
+
+## Interpretation of the Results 
+
+From @tbl-results it can be seen that SVM outperformed all models across all metrics. The worst performing model was the Lasso model which was to be expected since it is a linear model. In general, excluding the Lasso model, the models all had very similar results and performed well, but the best model was the SVM model. With regards to the data used, the models that performed best were ones that are more flexible, hence why SVM was able to perform so well. The SVM model was able to fit the data and explain 80% of the variance, as indicated by the R-Squared value, and as a results the predictions it made had the least amount of error.
+
+With regards to the RMSE and MAE metric for the SVM model, the MAE score is considerably lower than the RMSE. As stated previously, the MAE metric is not as affected by extreme outliers, thus the comparison of these two metrics shows that there were samples in the dataset that were outliers and may have affected the model's training. By looking at some values from the dataset, the minimum value for the target variable, earnings, is 11800.0, the maximum value is 104500.0, and the median is 31900.0. This shows that the target variable did have some outliers that may have effected how the model was fit, however the use of regularization when training the models would reduce the damage that these outliers may have caused.
+
+Overall, the SVM model was the best performing model and provided the most accurate results. With regards to the problem of predicting earnings after graduating from a specific institution, the SVM model was able to provide an adequate and meaningful approximation of future earnings. Although the RMSE was close to $5,000, the predictions of the model are still able to convey the desired message. The purpose of the model is not to predict exactly how much a student will make, it is to be used as a tool to guide and point students in the right direction when selecting a post-secondary institution to attend. For these reasons, the results of this project are considered adequate in helping to achieve the goal of this project.
+
+## Visualization
+
+In this section some more visualizations will be provided that help to compare the models presented above. This section will also include some interesting correlations that were discovered during the exploration of the data.
+
+![Accuracy of Models Within Different Intervals](../figures/model_accuracy_all.png){#fig-modelacc width=55%}
+
+@fig-modelacc shows compares the models and shows how accurate each model was at predicting values within the ranges, <10000, <8000, <5000, and <2000. The results in this figure do reflect the metrics of @tbl-results and further shows that at all intervals the SVM model was able to get the most predictions within a certain error range.
+
+@fig-modelfits compares how each of the model's predicted values fit to the true values. The SVM, Decision Tree, and KNN models all have a similar fit to the true data, however SVM is more tightly fitted to the true values. The shape of this curve shows that the models all underestimated the true value for samples 800 to 1000. This could mean that there was some feature common in those samples that wasn't being accounted for in the training of the models.
+
+::: {#fig-modelfits layout-nrow=3}
+
+![SVM](../figures/model_fit_svm.png){#fig-svmFit}
+
+![Decision Tree](../figures/model_fit_dt.png){#fig-dtFit}
+
+![KNN](../figures/model_fit_knn.png){#fig-knnFit}
+
+![Lasso](../figures/model_fit_lasso.png){#fig-lassoFit}
+
+![All](../figures/model_fit_all.png){#fig-allFit}
+
+Model Fit
+:::
+
+
+### Interesting Correlations
+
+This section will display some of the features that had high correlation with one another and provide an interpretation of what this correlation may mean for the greater scope of the project.
+
+
+::: {#fig-correlations layout-ncol=2}
+
+![Completion Rate VS Net Tuition Revenue](../figures/correlation_completion_vs_tuition.png){#fig-corr1}
+
+![Family Income VS Mean Earnings 6 Years After Graduation](../figures/correlation_family_income_vs_mean_earnings.png){#fig-corr2}
+
+![Withdrawal Rate VS Median Family Income](../figures/correlation_withdraw_vs_income.png){#fig-corr3}
+
+Correlations
+
+:::
+
+@fig-corr1 compares the completion rate of an institution against the net tuition revenue that that institution makes. This figure shows that there is a positive correlation between these two variables, and as the Net Tuition Revenue increases, so does the completion rate. This relationship could exist because, students who stay and complete their program will be paying more tuition to the institutions as opposed to the students who drop out early. It could also mean that schools that have high dropout rates will lower their tuition cost to attract more students, and thus they will suffer a loss in net tuition revenue.
+
+@fig-corr2 compares the family income against the mean earnings 6 years after graduation. Again a positive correlation can be seen on the graph. This relationship can provide insight into one of the socio-economic issues faced today by many lower class families. Wealthy families have more resources to spend on their children and provide them with better opportunities that can lead to their children earning more after leaving school, while poorer families are unable to provide such resources and thus their children may not have the same opportunity. Institutions should take this relationship into consideration when offering equal opportunity to students who attend their schools.
+
+@fig-corr3 compares the withdrawal rate at an institution to the median family income. There is a negative correlation between these two variables, as the withdrawal rate increases at an institution the median family income decreases. This relationship highlights another roadblock students may face with the pursuit of post-secondary education and that is that pursuing a higher education can be very costly, and if costs get too high it may result in students being forced to withdraw. This relationship should be considered by both students and institutions, students should ensure they are financially stable enough to attend certain institutions, and institutions should try and provided resources so less fortunate students are still able to attend the school and learn without fear of being forced to withdraw.

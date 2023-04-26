@@ -1,0 +1,71 @@
+# Methodology {#sec-methodology}
+
+The machine learning models used in this project had to be trained to the data before they could be used to make any meaningful predictions. Each model followed a similar training and optimization procedure which is outline in the following sections.
+
+## Introduction to Python for Machine Learning
+
+Python is the programming language of choice for this project. Python has lots of machine learning support making it very easy to build and test models such as the ones presented in this report. The Scikit-learn open source machine learning library was used to build, train, and test all the models in this project (@scikit-learn). 
+
+## Data Split
+
+The first step in training a model is to have data which it will use to train and data that it will use to test the models performance. To achieve this, the cleaned dataset was split into two parts. The first part is known as the training set which will be the data that is used to train and fit the model. The second part is the test set which is used to evaluate the trained models on new data that was not seen before. 
+
+It is best to train the data on as many samples as possible, but also it is important to test the models on a large variety of samples to get an accurate representation of how the model performs. The split used was a 70/30 split which means that 70% of the dataset is used for training while the remaining 30% is used for testing. The pre-processed dataset had 5003 samples, after the split the training set had 3502 samples and the test set had 1501 samples.
+
+## Model Planning
+
+The problem of predicting future earnings is a regression problem, therefore the models that will be used must work well with regression. Also, given that the dataset has many features it is highly unlikely that a linear model will be able to accurately capture the fit of the data, thus non-linear models must be considered when selecting a model. Finally, since the earnings of each sample in the dataset is know, the models will be supervised learning models.
+
+With these requirements in mind, the models that were chosen are: Support Vector Machine (SVM), Decision Tree, K-Nearest Neighbor (KNN), and Lasso Regression. A brief discussion of the models and why they were selected are in the following sub-sections.
+
+### SVM
+
+SVM's are complex supervised learning methods that work well in high dimensional spaces. Typically they are used in classification problems, however they still can be used for regression. Since the dataset being used is of higher dimension it was necessary to use a model that can work well with such data and SVM is one such model. SVM is a very complex model compared to other models, but it is also able to provide good results for the type multi-variate model that will be created (@scikitSVM).
+
+### Decision Tree
+
+Decision Tree models are used both in classification and regression. The learn simple decision rules from the data features and use these rules to make predictions. These decision trees can get very complex depending on how deep it is allowed to grow. The benefit of a decision tree is its interpretability, they can easily be visualized which makes it good for dealing with data that is hard to visualize such as the dataset this project is using. (@scikitDT)
+
+### KNN
+
+KNN is a very simple model conceptually, but it can provide great results. The KNN model works by taking a predefined number of training samples that are closest to the new point, and assigning a value to the new point based on those nearest points. KNN works for both classification problems and regression problems. It's simplicity makes it appealing when dealing with large datasets with lots of features. (@scikitKNN)
+
+### Lasso
+
+Lasso is a linear model that implements a penalty to regularize the model. Lasso is interesting because the penalty function allows for some coefficients to be set to zero, effectively removing them from the equation and thus performing a type of feature selection. On the dataset being used, Lasso will most likely perform worse than the other models simply because it is a linear model. The purpose of including it was to have some contrast to the performance of non-linear models vs linear models and show that the non-linear models are able to fit the data much better than just a linear model. (@scikitLM)  
+
+## Model Training 
+
+The models all followed a general process for training, however some models required additional pre-processing steps that others did not. Generally, the models all were trained using the training data and were evaluated on the new testing data. The machine learning library Scikit-Learn has implementations for all the models that were considered in this project, using this implementation meant that the models could be fine-tuned and then fit to the data and once fit they could be evaluated using new data. Each model also had their own hyperparameters that would change the performance of the model when adjusted. For some models the use of GridSearch was possible because it didn't take long to fit the model or because they had fewer hyperparameters, for others, such as the SVM model, using GridSearch was just not plausible due to the time it took to produce any meaningful results, instead those models were tweaked by hand until satisfactory results were achieved.
+
+To determine if a model improved between training iterations, the mean squared error (MSE) was observed and compared. If the MSE decreased as a result of a change made to the model, then that change would be considered good, otherwise if the MSE increased then the change that was made would be reverted. This process of examining the change in MSE would repeat until the change in MSE was not significantly increasing.
+
+A common problem with models is that they can become overfit to the training data. This is very common in SVM and Decision Tree models just because of the nature of their algorithms. To remedy this problem the regularization technique of Bagging is used. Bagging works by taking multiple regressors, fitting them on a subset of the original data, and then aggregating the results to form a final prediction. Scikit-learn has a library that implements Bagging called BaggingRegressor that will be used with the models that require regularization.
+
+The sections below will walk through each model's process of being trained, as well as how the models performance was determined.
+
+### Training SVM
+
+The first step in training the SVM model was to standardize the given training features, this is because the SVM algorithms are not scale invariant. After the training data was standardized, the model was ready to be trained. The SVM models have a few hyperparameters that control the fit of the model, they are: the kernel, the C parameter, and the gamma. The kernel of an SVM model controls the general shape of the fit, for this model the 'rbf' kernel was used but the other kernel options were 'linear', 'poly', 'sigmoid', and 'precomputed'. The gamma parameter is the coefficient of the kernel, and the C parameter is the regularization parameter.
+
+On the first attempt at fitting the SVM model, the resulting training error was extremely high meaning the model was completely underfit. To remedy this, the C parameter was increased to reduce the amount of regularization and this change resulted in the training error improving significantly. The gamma parameter was also adjusted slightly, however, when the gamma parameter was adjusted it caused the model to become extremely overfit to the data. To deal with the problem of overfitting, the SVM model was also used in combination with Bagging. Bagging worked on the SVM model to decrease the variance in the model and increase the bias, causing the model to perform better when tested on unseen data. 
+
+### Training Decision Tree
+
+The Decision Tree models have an added benefit in that they do not require any additional pre-processing of the data before it can be fit to the model. The Decision Tree models have hyperparameters: max depth, minimum samples split, and max features. The max depth is one of the more important parameters because it controls how deep the tree will grow, a tree that has no max depth will be fitted very strongly to the data, which can lead to overfitting. The minimum samples split is another parameter that is used to temper the fit of the model to the data, it controls how many samples are required to split an internal node. Finally the last hyperparemeter that was used is the max features parameter, this controls how many features to consider when looking for the best split. 
+
+The Decision Tree model was first fit without adjusting the hyperparameters, and leaving the max depth uncapped. As expected the Decision Tree was able to perfectly predict all values of the training data but performed poorly on new data, this is a result of not specifying the max depth. To adjust the overfitting of the model, the hyperparameters were adjusted, however even after adjusting the parameters it was still clear that the model was overfit. To remedy the overfitting, Bagging was used on the decision model and that substantially reduced the fit to the training data and increased the performance on new unseen data.
+
+### Training KNN
+
+KNN is one of more simple models that can be used when it comes to regression. KNN is typically used for classification problems but Scikit-learn has a regression implementation of KNN that performs well. The hyperparameter used for training the KNN model was simply the number of neighbors. Increasing the number of neighbors will reduce the fit of the model to the data, while decreasing it will increase the fit. KNN can also be overfit to the data if the number of neighbors considered is small enough (i.e. close or equal to 1). The benefit of this model being so simple means that using a GridSearch algorithm to find the optimal number of neighbors is possible. Before KNN could be fit to the training data, the data had to be scaled so the model could work better. 
+
+First GridSearch was given a range of numbers from 1 to 100 which represent the number of neighbors to consider. This process returned the optimal number of neighbors for a KNN model on the data. However, the results from using KNN by itself were not that impressive, so Bagging was also used on top of KNN. Since Bagging is a regularization method and KNN has a built in regularization parameter in the form of the number of neighbors, it made logical sense to increase the flexibility of the KNN model and regularize it using Bagging. This mean't that the number of neighbors found by using GridSearch could be used as a starting point and then could be decreased to increase the fit of KNN, and at the same time tweaking the parameters of the Bagging algorithm to regularize the model. This combined approach performed better on new unseen data compared to the approach without using Bagging.
+
+### Training Lasso
+
+Lasso Regression is a linear model that implements a penalty function that can set the coefficients of parameters to 0, removing them from the equation. The hyperparameter for lasso is alpha which controls the strength of the penalty function, or in other words the strength of the regularization. Since this model is linear, it was most likely not going to perform well with the data because of how high-dimension it was. Regardless of that, it was used as a way to compare the results of a linear model to a non-linear model and see that the non-linear model is adding more value than a simple linear model. As expected the Lasso model did not perform well even with the training data, and changing the alpha hyperparameter did not effect the results either. Since the model was underfit to the training data, there was no need to use Bagging.
+
+## Final Model Building
+
+The final stage of model training is to train the models using the best hyperparameters that were found through the optimization process of each model. The trained models will then be fit to new unseen test data. This procedure is outlined in @sec-results.

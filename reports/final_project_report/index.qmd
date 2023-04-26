@@ -1,0 +1,13 @@
+# Index {.unnumbered}
+
+## Terms and Abbreviations
+
+**SVM** - Support Vector Machine
+
+**KNN** - K-Nearest Neighbor
+
+**MSE** - Mean Square Error
+
+**RMSE** - Root Mean Square Error
+
+**MAE** - Mean Absolute Error
